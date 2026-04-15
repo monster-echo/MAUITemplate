@@ -1,70 +1,74 @@
 # MAUITemplate
 
-一个从 `V2ex.Maui2` 提炼出来的 **MAUI + HybridWebView + Ionic** 起始模板。
+**MAUITemplate** 是一个开箱即用的 **.NET MAUI + Ionic React** 混合应用（Hybrid App）开发起始模板。
 
-这个模板保留了最核心、最通用的基础设施：
+本模板为你搭建好了原生壳子、前端骨架以及它们之间稳定双向的通信桥梁。这意味着你可以**立刻使用熟悉的 React & Web 技术**去编写应用漂亮的界面，同时还能非常轻松、安全地调用各种手机原生能力。
 
-- `MAUI` 原生宿主壳与生命周期恢复逻辑
-- `HybridWebView` 的稳定双向 bridge（JS ↔ C#）
-- `Ionic React` 前端骨架与 hash 路由
-- `MAUI` 与 `Ionic` 主题同步机制
-- `App / Core / Web` 三层分离，方便后续换业务不换底盘
+---
 
-## 目录结构
+## 🎨 为什么使用这个模板？
 
-- `src/MAUITemplate.App`：原生 MAUI 宿主、HybridWebView、bridge、主题同步、状态栏控制
-- `src/MAUITemplate.Core`：共享契约、feature 元数据、配置与 diagnostics 模型
-- `src/MAUITemplate.Web`：Ionic React 前端源码
+通过组合 MAUI 与 Ionic React，你可以体会到“写 Web 一样快”，且“像原生一样流畅”的开发体验。模板内置且通过双向联调测试的基础功能包括但不限于：
 
-## 当前前端架构
+- **主题与 UI**：像原生一样的侧滑返回、点击水波纹，且亮/暗模式随系统自动平滑切换。
+- **设备交互**：消息提示 (Toast/Snackbar)、原生震动反馈 (Haptics)、跨端通知。
+- **设备媒体**：直接调用系统相册、调用原生相机拍照，以及最难搞定的——**本地选择/拍摄视频并稳定在 Web 中预览**机制。
 
-- `features`：按功能切片组织代码，例如 `features/home`、`features/settings`、`features/diagnostics`
-- `zustand`：集中管理应用初始化状态、bridge 状态、系统信息、`featureDefinitions`
-- `zod`：统一校验 native bridge 返回的数据结构，避免 JS/C# 契约漂移
+### 功能快速预览
 
-当前已经内置几个模板级 feature slice：
+<div style="display: flex; flex-direction: row; gap: 16px;">
+  <img src="docs/screenshots/readme-home.png" alt="应用首页" width="250" />
+  <img src="docs/screenshots/readme-settings.png" alt="系统设置" width="250" />
+  <img src="docs/screenshots/readme-video.png" alt="原生视频捕捉与播放" width="250" />
+</div>
 
-- `features/home`：产品化首页入口
-- `features/settings`：主题、支持链接、系统信息、bridge 能力
-- `features/diagnostics`：运行态诊断信息
+---
 
-## 使用方式
+## 🌉 极速双向 Bridge，就像调用普通 API
 
-### 1. 构建前端资源
+很多混合架构最让人头疼的是 **前端 (JS)** 怎么跟 **原生端 (C#)** 传数据，特别是怎么传“图”和“二进制”。
 
-在 `src/MAUITemplate.Web` 中安装依赖并构建。构建产物会自动复制到 `MAUITemplate.App/Resources/Raw/wwwroot`。
+在这里，这个问题已经被彻底解决：我们封装了一套功能完整且强类型的 `HybridWebView` 桥接机制。
 
-### 2. 运行 MAUI App
+- **快速单次调用**：前端只需写 `await nativeBridge.getSystemInfo()` 就能拿到原生传来的系统信息。跨界就像在一个项目里调用一个普通函数。
+- **原始交互事件**：想要更底层？直接发送 raw message。
+- **长连接与持续推流**：只需前端发个命令，C# 就可以源源不断地把大量文本甚至**真实的二进制数据块**持续推送并展示在给前端。
 
-在 `src/MAUITemplate.App` 中运行或调试目标平台。
+### 桥接能力测试
 
-## 模板里的关键约定
+在模板的开发者工具里，你可以非常直观地测试所有 JS 与 C# 的通信链路。
 
-### bridge 约定
+<div style="display: flex; flex-direction: row; gap: 16px;">
+  <img src="docs/screenshots/readme-bridge.png" alt="通用交互中心" width="250" />
+  <img src="docs/screenshots/readme-bridge-stream.png" alt="二进制流式数据演示" width="250" />
+</div>
 
-- `appInit`：前端通知原生准备接收初始化信息
-- `initData`：原生返回平台信息等启动载荷
-- `appReady`：前端完成首屏渲染，原生可隐藏 splash
-- `theme`：前端主题变化后通知原生同步状态栏/导航栏
-- `pushNavigate`：原生向前端派发待处理导航
+---
 
-### 主题约定
+## 🚀 怎么快速跑起来？
 
-- Ionic 颜色 token 在 `src/MAUITemplate.Web/src/theme/variables.css`
-- MAUI 原生颜色 token 在 `src/MAUITemplate.App/Resources/Styles/Colors.xaml`
-- 两边尽量维护同名/同值 token，避免主题漂移
+### 前端开发 (Ionic React)
 
-## 建议你以后怎么用
+所有的 UI 相关代码全在 `src/MAUITemplate.Web`，你不需要关心繁杂的原生逻辑，只需要打开它：
 
-- 把业务 API、模型、仓储接口优先放到 `Core`
-- 把设备能力、通知、相机、文件、分享等放到 `App/Services`
-- 把具体页面与状态管理放到 `Web`
-- 在 `src/MAUITemplate.Web/src/features/<feature-name>` 下为每个功能建立独立目录
-- 新增 bridge 返回结构时，先补 `zod` schema，再在 store 和页面里消费
-- 新业务只扩展 `AppBridge`，不要改动桥的协议风格
+```bash
+cd src/MAUITemplate.Web
+npm install
+npm run build
+```
 
-更详细的说明见 `docs/architecture.md`。
+*注意：构建完成的前端产物会自动按需复制到 MAUI 的静态资源目录下。*
 
-## 当前状态
+### 原生启动 (MAUI)
 
-这个仓库现在已经是一个可继续迭代的模板仓库；以后新项目直接从这里复制/派生即可。
+用 Visual Studio、Rider 或者 VS Code (配合 MAUI 扩展) 打开项目顶层的 `MAUITemplate.sln`，选中 Android 等平台，点击运行（F5），它就能被推送到你的手机或模拟器里。跑起来之后，它就会加载你刚刚构建的前端页面！
+
+---
+
+## 🏗️ 给开发者的建议（目录约定）
+
+1. **核心共享**：把不依赖 UI，可以被跨模块复用的 API、模型、协议放到 `src/MAUITemplate.Core`。
+2. **原生桥接**：要是你要增加原生的新能力（比如蓝牙），直接在 `AppBridge.Interop.cs` 或同目录里加个新方法。别忘了在前端 `nativeBridge.ts` 稍微加几行绑定下就行。
+3. **前端切片**：前端新增加功能页时，都在 `src/MAUITemplate.Web/src/features/<feature-name>` 下新建文件夹。
+
+更多开发和架构讨论，请参考 `docs/architecture.md`。
