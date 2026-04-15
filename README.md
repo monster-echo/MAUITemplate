@@ -41,8 +41,8 @@ Here, this issue has been completely solved: we've encapsulated a fully function
 In the template's developer tools, you can visually test all JS and C# communication channels.
 
 <div style="display: flex; flex-direction: row; gap: 16px;">
-  <img src="docs/screenshots/readme-bridge.png" alt="General Interaction Center" width="250" />
-  <img src="docs/screenshots/readme-bridge-stream.png" alt="Binary Stream Data Demo" width="250" />
+  <img src="docs/screenshots/readme-invoke1.png" alt="General Interaction Center" width="250" />
+  <img src="docs/screenshots/readme-invoke2.png" alt="Binary Stream Data Demo" width="250" />
 </div>
 
 ---
