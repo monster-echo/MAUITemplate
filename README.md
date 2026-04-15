@@ -1,6 +1,6 @@
 # MAUITemplate
 
-[中文版](README.zh.md)
+[中文版](README-zh.md)
 
 **MAUITemplate** is an out-of-the-box **.NET MAUI + Ionic React** Hybrid App development starter template.
 
@@ -72,5 +72,3 @@ Open `MAUITemplate.sln` at the project root using Visual Studio, Rider, or VS Co
 1. **Core Shared**: Place UI-independent definitions, models, and protocols that can be reused across modules in `src/MAUITemplate.Core`.
 2. **Native Bridge**: If you need to add a new native capability (e.g., Bluetooth), just add a new method in `AppBridge.Interop.cs` or the same directory. Don't forget to add a brief binding in the frontend's `nativeBridge.ts`.
 3. **Frontend Slicing**: When adding a new feature page on the frontend, create a new folder under `src/MAUITemplate.Web/src/features/<feature-name>`.
-
-For more development and architecture discussions, please refer to `docs/architecture.md`.
