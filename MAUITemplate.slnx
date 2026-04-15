@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MAUITemplate.App/MAUITemplate.App.csproj" />
+    <Project Path="src/MAUITemplate.Core/MAUITemplate.Core.csproj" />
+  </Folder>
+</Solution>
