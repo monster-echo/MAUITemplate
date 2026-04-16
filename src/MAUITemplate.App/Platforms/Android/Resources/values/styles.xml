@@ -25,5 +25,10 @@
         <item name="android:windowBackground">@drawable/maui_splash</item>
         <item name="android:windowSplashScreenBackground">@color/maui_splash_color</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/maui_splash</item>
+        <!-- Fix status bar / nav bar colors matching the Splash screen (#1E1B4B) -->
+        <item name="android:statusBarColor">@color/maui_splash_color</item>
+        <item name="android:navigationBarColor">@color/maui_splash_color</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 </resources>
