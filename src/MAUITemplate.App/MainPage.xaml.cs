@@ -146,23 +146,39 @@ public partial class MainPage : ContentPage
 
 	private async Task HandleResumeAsync()
 	{
-		ShowSplashScreenWithTimeout(TimeSpan.FromSeconds(8));
-
 		if (hybridWebView?.Handler?.PlatformView is null)
 		{
-			HideSplashScreen();
 			return;
 		}
 
 		if (!IsWebViewAttached(hybridWebView.Handler.PlatformView))
 		{
-			HideSplashScreen();
 			return;
 		}
 
-		var isHealthy = await CheckWebViewHealthAsync();
-		if (!isHealthy)
+		// 1. 静默探活：给 WebView 300 毫秒的时间来回应心跳
+		// 如果应用只是短暂切出并秒回，且前端运行正常，我们就完全跳过动画遮罩，避免白屏闪烁
+		var healthTask = CheckWebViewHealthAsync();
+		var firstCompleted = await Task.WhenAny(healthTask, Task.Delay(300));
+
+		if (firstCompleted == healthTask && await healthTask)
 		{
+			DispatchPendingNavigation();
+			return;
+		}
+
+		// 2. 超时未回应，或者判定假死：这时候必须拉起加载遮罩蒙层了
+		ShowSplashScreenWithTimeout(TimeSpan.FromSeconds(8));
+
+		// 3. 再给它最多 2 秒的时间挣扎一下，确认是不是彻底卡死了
+		if (!healthTask.IsCompleted)
+		{
+			firstCompleted = await Task.WhenAny(healthTask, Task.Delay(2000));
+		}
+
+		if (firstCompleted != healthTask || !(await healthTask))
+		{
+			// 确认无法抢救，执行重新加载操作
 			await RecoverWebViewAsync();
 			return;
 		}
